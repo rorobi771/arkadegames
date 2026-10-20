@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Русская Классика — Электронная Библиотека</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Lora', 'Georgia', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .reader-text {
+            font-family: 'Lora', Georgia, serif;
+            line-height: 1.8;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
+
+    <header
+        class="sticky top-0 z-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('catalog')">
+                <div class="w-10 h-10 rounded-xl bg-amber-700 flex items-center justify-center text-white shadow-md">
+                    <i class="fa-solid fa-book-open text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg tracking-tight text-amber-900 dark:text-amber-400">Русская Классика
+                    </h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Электронная библиотека</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <!-- Search input in header (visible on catalog) -->
+                <div id="header-search-container" class="hidden md:flex items-center relative">
+                    <i class="fa-solid fa-search absolute left-3 text-slate-400 text-sm"></i>
+                    <input type="text" id="header-search" placeholder="Поиск книг или авторов..."
+                        oninput="handleSearch(this.value)"
+                        class="pl-9 pr-4 py-1.5 text-sm bg-slate-100 dark:bg-slate-700 rounded-full border-none focus:ring-2 focus:ring-amber-600 outline-none w-64 transition-all">
+                </div>
+
+                <button onclick="toggleDarkMode()"
+                    class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
+                    title="Сменить тему">
+                    <i id="theme-icon" class="fa-solid fa-moon text-lg"></i>
+                </button>
+
+                <button id="nav-catalog-btn" onclick="switchView('catalog')"
+                    class="hidden items-center space-x-2 px-4 py-2 bg-amber-700 hover:bg-amber-800 text-white rounded-lg text-sm font-medium transition-colors shadow-sm">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>К каталогу</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <div id="catalog-view" class="space-y-8">
+
+            <div
+                class="relative rounded-2xl bg-gradient-to-r from-amber-900 via-amber-800 to-slate-900 text-white p-8 md:p-12 overflow-hidden shadow-xl">
+                <div
+                    class="absolute right-0 top-0 bottom-0 w-1/3 opacity-10 hidden md:flex items-center justify-center">
+                    <i class="fa-solid fa-feather text-[250px]"></i>
+                </div>
+                <div class="relative z-10 max-w-2xl space-y-4">
+                    <span
+                        class="px-3 py-1 bg-amber-700/60 backdrop-blur-sm rounded-full text-xs font-semibold uppercase tracking-wider text-amber-200">Золотой
+                        фонд литературы</span>
+                    <h2 class="text-3xl md:text-5xl font-serif font-bold tracking-tight">Великие произведения русской
+                        классики</h2>
+                    <p class="text-amber-100/90 text-sm md:text-base">Читайте шедевры Пушкина, Достоевского, Толстого,
+                        Чехова и Гоголя бесплатно в удобном онлайн-формате прямо в браузере.</p>
+                    <div class="pt-2 flex flex-wrap gap-3">
+                        <button onclick="filterCategory('все')"
+                            class="px-4 py-2 bg-white text-amber-900 font-medium rounded-lg text-sm shadow hover:bg-amber-50 transition-colors">Все
+                            книги</button>
+                        <button onclick="filterCategory('Роман')"
+                            class="px-4 py-2 bg-amber-800/80 hover:bg-amber-700 text-white font-medium rounded-lg text-sm backdrop-blur-sm border border-amber-600/40 transition-colors">Романы</button>
+                        <button onclick="filterCategory('Поэзия')"
+                            class="px-4 py-2 bg-amber-800/80 hover:bg-amber-700 text-white font-medium rounded-lg text-sm backdrop-blur-sm border border-amber-600/40 transition-colors">Поэзия</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+                <!-- Categories Pills -->
+                <div id="category-filters" class="flex flex-wrap gap-2">
+                    <button onclick="filterCategory('все')" data-cat="все"
+                        class="cat-btn px-4 py-2 rounded-xl text-sm font-medium bg-amber-700 text-white shadow-sm transition-all">Все</button>
+                    <button onclick="filterCategory('Роман')" data-cat="Роман"
+                        class="cat-btn px-4 py-2 rounded-xl text-sm font-medium bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all">Роман</button>
+                    <button onclick="filterCategory('Повесть')" data-cat="Повесть"
+                        class="cat-btn px-4 py-2 rounded-xl text-sm font-medium bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all">Повесть</button>
+                    <button onclick="filterCategory('Поэзия')" data-cat="Поэзия"
+                        class="cat-btn px-4 py-2 rounded-xl text-sm font-medium bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all">Поэзия</button>
+                    <button onclick="filterCategory('Драма')" data-cat="Драма"
+                        class="cat-btn px-4 py-2 rounded-xl text-sm font-medium bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all">Драма</button>
+                    <button onclick="filterCategory('Рассказы')" data-cat="Рассказы"
+                        class="cat-btn px-4 py-2 rounded-xl text-sm font-medium bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all">Рассказы</button>
+                </div>
+
+                <div class="md:hidden relative">
+                    <i class="fa-solid fa-search absolute left-3 top-3 text-slate-400 text-sm"></i>
+                    <input type="text" placeholder="Поиск книг..." oninput="handleSearch(this.value)"
+                        class="w-full pl-9 pr-4 py-2 text-sm bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-amber-600 outline-none">
+                </div>
+            </div>
+
+            <div id="books-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
+
+            <div id="no-books" class="hidden text-center py-16 space-y-3">
+                <i class="fa-solid fa-book-skull text-4xl text-slate-400"></i>
+                <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-300">Книги не найдены</h3>
+                <p class="text-sm text-slate-500">Попробуйте изменить поисковый запрос или категорию.</p>
+            </div>
+        </div>
+
+        <div id="reader-view" class="hidden space-y-6">
+            <div
+                class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <button onclick="toggleSidebar()"
+                        class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors"
+                        title="Содержание глав">
+                        <i class="fa-solid fa-list"></i>
+                    </button>
+                    <div>
+                        <h3 id="reader-book-title"
+                            class="font-serif font-bold text-base md:text-lg text-slate-900 dark:text-slate-100">
+                            Название книги</h3>
+                        <p id="reader-chapter-title" class="text-xs text-amber-700 dark:text-amber-400 font-medium">
+                            Глава 1</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <div class="flex items-center bg-slate-100 dark:bg-slate-700 rounded-xl p-1">
+                        <button onclick="changeFontSize(-2)"
+                            class="px-3 py-1 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-600 rounded-lg transition-colors"
+                            title="Уменьшить шрифт">A-</button>
+                        <span id="font-size-display"
+                            class="px-2 text-xs font-semibold text-slate-600 dark:text-slate-400">18px</span>
+                        <button onclick="changeFontSize(2)"
+                            class="px-3 py-1 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-600 rounded-lg transition-colors"
+                            title="Увеличить шрифт">A+</button>
+                    </div>
+
+                    <div class="hidden sm:flex items-center bg-slate-100 dark:bg-slate-700 rounded-xl p-1 space-x-1">
+                        <button onclick="setReaderTheme('light')"
+                            class="w-7 h-7 rounded-lg bg-white shadow-sm border border-slate-300 flex items-center justify-center text-xs text-slate-800"
+                            title="Светлая">С</button>
+                        <button onclick="setReaderTheme('sepia')"
+                            class="w-7 h-7 rounded-lg bg-[#f4ecd8] shadow-sm border border-amber-200 flex items-center justify-center text-xs text-amber-900"
+                            title="Сепия">Сп</button>
+                        <button onclick="setReaderTheme('dark')"
+                            class="w-7 h-7 rounded-lg bg-slate-900 shadow-sm border border-slate-700 flex items-center justify-center text-xs text-slate-100"
+                            title="Темная">Т</button>
+                    </div>
+
+                    <button onclick="saveBookmark()"
+                        class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-amber-600 dark:text-amber-400 transition-colors"
+                        title="Сохранить закладку">
+                        <i class="fa-solid fa-bookmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                <div id="reading-progress" class="bg-amber-600 h-full w-0 transition-all duration-150"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+
+                <!-- Chapters Sidebar -->
+                <div id="reader-sidebar"
+                    class="hidden lg:block lg:col-span-1 bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3 sticky top-24">
+                    <h4
+                        class="font-bold text-sm text-slate-700 dark:text-slate-300 uppercase tracking-wider border-b pb-2 border-slate-100 dark:border-slate-700">
+                        Содержание</h4>
+                    <div id="chapters-list" class="space-y-1 max-h-[60vh] overflow-y-auto pr-1">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div id="reader-content-wrapper"
+                    class="lg:col-span-3 bg-white dark:bg-slate-800 p-6 md:p-12 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors">
+                    <div class="max-w-3xl mx-auto space-y-6">
+                        <div class="border-b border-slate-100 dark:border-slate-700 pb-4 mb-6">
+                            <span id="reader-book-author"
+                                class="text-amber-700 dark:text-amber-400 font-semibold text-sm uppercase tracking-wider">Автор</span>
+                            <h2 id="reader-chapter-heading"
+                                class="text-2xl md:text-3xl font-serif font-bold text-slate-900 dark:text-slate-100 mt-1">
+                                Заголовок главы</h2>
+                        </div>
+
+                        <div id="reader-text-body"
+                            class="reader-text text-slate-700 dark:text-slate-200 space-y-6 text-lg">
+                        </div>
+
+                        <div
+                            class="pt-8 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                            <button id="prev-chapter-btn" onclick="changeChapter(-1)"
+                                class="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl text-sm font-medium flex items-center space-x-2 transition-colors">
+                                <i class="fa-solid fa-chevron-left"></i>
+                                <span>Предыдущая глава</span>
+                            </button>
+                            <button id="next-chapter-btn" onclick="changeChapter(1)"
+                                class="px-4 py-2 bg-amber-700 hover:bg-amber-800 text-white rounded-xl text-sm font-medium flex items-center space-x-2 transition-colors">
+                                <span>Следующая глава</span>
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <div id="message-modal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+        <div
+            class="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-slate-200 dark:border-slate-700 text-center space-y-4">
+            <div id="modal-icon"
+                class="w-12 h-12 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-bookmark"></i>
+            </div>
+            <h3 id="modal-title" class="font-bold text-lg text-slate-900 dark:text-slate-100">Закладка сохранена</h3>
+            <p id="modal-text" class="text-sm text-slate-600 dark:text-slate-300">Прогресс чтения успешно сохранен в
+                памяти устройства.</p>
+            <button onclick="closeModal()"
+                class="w-full py-2.5 bg-amber-700 hover:bg-amber-800 text-white font-medium rounded-xl text-sm transition-colors">Понятно</button>
+        </div>
+    </div>
+
+    <footer class="mt-auto bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-8">
+        <div
+            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-feather text-amber-700"></i>
+                <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Русская Классика онлайн</span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Электронная библиотека русской литературы. Доступ к
+                чтению по прямой ссылке.</p>
+            <div class="flex space-x-4 text-sm text-slate-500">
+                <span class="hover:text-amber-700 cursor-pointer"
+                    onclick="showInfoModal('О проекте', 'Библиотека создана для ценителей русской классической литературы. Все произведения доступны для бесплатного чтения.')">О
+                    проекте</span>
+                <span class="hover:text-amber-700 cursor-pointer"
+                    onclick="showInfoModal('Контакты', 'Свяжитесь с нами по вопросам пополнения библиотеки: support@russianclassics.ru')">Контакты</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const booksDatabase = [
+            {
+                id: "onegin",
+                title: "Евгений Онегин",
+                author: "Александр Сергеевич Пушкин",
+                category: "Поэзия",
+                coverBg: "from-amber-800 to-amber-950",
+                coverIcon: "fa-feather",
+                year: "1833",
+                description: "Роман в стихах великого русского поэта А. С. Пушкина, одно из самых значительных произведений русской литературы.",
+                chapters: [
+                    {
+                        title: "Глава первая. Молодой повеса",
+                        text: [
+                            "«И жить торопится и чувствовать спешит».\nП. Вяземский",
+                            "Мой дядя самых честных правил,\nКогда не в шутку занемог,\nОн уважать себя заставил\nИ лучше выдумать не мог.\nЕго пример другим наука;\nНо, боже мой, какая скука\nС больным сидеть и день и ночь,\nНе отходя ни шагу прочь!\nКакое низкое коварство\nПолуживого забавлять,\nЕго подушки поправлять,\nПечально подносить лекарство,\nВздыхать и думать про себя:\nКогда же черт возьмет тебя!",
+                            "Так думал молодой повеса,\nЛетя в пыли на почтовых,\Всевышней волею Зевеса\nНаследник всех своих родных.\nДрузья Людмилы и Руслана!\nС героем моего романа\nБез предисловий, сей же час\nПусть явит взоры он для вас.",
+                            "Онегин, добрый мой приятель,\nРодился на брегах Невы,\Где, может быть, и вы родились\nИли блистали, мой читатель!\nТам некогда и я гулял:\nНо вреден север для меня.\nСлужив отлично благородно,\\Хотя был молод и свободен,\nОнегин светский человек..."
+                        ]
+                    },
+                    {
+                        title: "Глава вторая. Поэт и деревня",
+                        text: [
+                            "Деревня, где скучал Евгений,\nБыла прелестный уголок;\nПредоставлял он день мучений\nДля заточения в замок.\nДикий помещик, молодой,\nС тоской в душе и головой.",
+                            "Вдруг в соседнем имении появляется молодой поэт Владимир Ленский, недавно приехавший из Германии, поклонник Канта и романтической поэзии...",
+                            "Онегин и Ленский сошлись. Волна и камень, стихи и проза, лед и пламень не столь различны меж собой..."
+                        ]
+                    },
+                    {
+                        title: "Глава третья. Татьяна",
+                        text: [
+                            "Пора пришла, она влюбилась.\nТатьяна, русская душою,\nСама не знаю почему,\nС народной верою своею,\nПленялась старою зимою...",
+                            "В этот момент Татьяна пишет свое знаменитое письмо к Онегину: «Я к вам пишу — чего же боле? Что я могу еще сказать? Теперь я знаю, в вашей воле меня презреньем наказать...»"
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "crime",
+                title: "Преступление и наказание",
+                author: "Федор Михайлович Достоевский",
+                category: "Роман",
+                coverBg: "from-stone-800 to-stone-950",
+                coverIcon: "fa-scale-balanced",
+                year: "1866",
+                description: "Психологический роман о нравственных терзаниях бывшего студента Родиона Раскольникова, совершившего убийство.",
+                chapters: [
+                    {
+                        title: "Часть первая. Глава I",
+                        text: [
+                            "В начале июля, в чрезвычайно жаркое время, под вечер, один молодой человек вышел из своей каморки, которую нанимал от жильцов в С—м переулке, на улицу и медленно, как бы в нерешимости, отправился к К—ну мосту.",
+                            "Он благополучно избежал встречи с своею хозяйкой на лестнице. Каморка его приходилась под самою кровлей высокого пятиэтажного дома и походила больше на шкаф, чем на квартиру.",
+                            "Квартал этот был знаком ему до малейших подробностей. Выходя на улицу, он каждый раз испытывал болезненное чувство трусости и стыда, которое угнетало его гордость."
+                        ]
+                    },
+                    {
+                        title: "Часть первая. Глава II",
+                        text: [
+                            "«А впрочем, я слишком много болтаю. Оттого и ничего не делаю, что болтаю», — подумал он про себя с горькой усмешкой.",
+                            "Он зашел в распивочную, где познакомился с бывшим чиновником Мармеладовым, который поведал ему свою трагическую историю жизни и судьбу своей дочери Сонечки."
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "war",
+                title: "Война и мир",
+                author: "Лев Николаевич Толстой",
+                category: "Роман",
+                coverBg: "from-amber-900 to-stone-900",
+                coverIcon: "fa-landmark",
+                year: "1869",
+                description: "Эпический роман, описывающий русское общество в эпоху войн против Наполеона в 1805–1812 годах.",
+                chapters: [
+                    {
+                        title: "Том 1. Часть первая. Глава I",
+                        text: [
+                            "— Еh bien, mon prince. Gênes et Lucques ne sont plus que des apanages, des поместья, de la famille Buonaparte...",
+                            "Так говорила в июле 1805 года известная фрейлина и приближенная императрицы Марии Федоровны, Анна Павловна Шерер, кашляя и договаривая свои речи...",
+                            "В салон Анны Павловны съезжается петербургский бомонд: князь Василий Курагин со своими детьми, князь Андрей Болконский и Пьер Безухов."
+                        ]
+                    },
+                    {
+                        title: "Том 1. Часть первая. Глава II",
+                        text: [
+                            "Князь Андрей Болконский был невесел в этот вечер. Ему наскучил петербургский свет, наскучила светская жена, и он грезил о подвиге и славе на предстоящей войне с Бонапартом."
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "souls",
+                title: "Мёртвые души",
+                author: "Николай Васильевич Гоголь",
+                category: "Повесть",
+                coverBg: "from-teal-900 to-slate-900",
+                coverIcon: "fa-ghost",
+                year: "1842",
+                description: "Поэма-роман о приключениях Павла Ивановича Чичикова, скупающего «мертвые души» крестьян.",
+                chapters: [
+                    {
+                        title: "Глава первая. Приезд в губернский город",
+                        text: [
+                            "В ворота гостиницы губернского города NN въехавшую рессорную небольшую бричку, в какой ездить любят холостяки, отставные подполковники, штабс-капитаны...",
+                            "В бричке сидел господин, не красавец, но и не дурной наружности, ни слишком толст, ни слишком тонок; нельзя сказать, чтобы старок, однако ж и не слишком мал годами.",
+                            "Гостиный двор наполнился слухами. Чичиков отправился на визиты к местному губернатору, вице-губернатору, прокурору и председателю палаты."
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "chekhov",
+                title: "Рассказы и повести",
+                author: "Антон Павлович Чехов",
+                category: "Рассказы",
+                coverBg: "from-sky-900 to-slate-900",
+                coverIcon: "fa-book",
+                year: "1895",
+                description: "Сборник знаменитых коротких рассказов мастера психологической прозы и тонкого юмора.",
+                chapters: [
+                    {
+                        title: "Толстый и тонкий",
+                        text: [
+                            "На вокзале Николаевской железной дороги встретились два приятеля: один толстый, а другой тонкий.",
+                            "Толстый только что пообедал на вокзале, и губы его, подёрнутые маслом, лоснились, как спелые вишни. Пахло от него хересом и флёр-до-оранжем.",
+                            "— Порфирий! — воскликнул толстый, увидев тонкого. — Ты ли это? Голубчик мой! Сколько зим, сколько лет!"
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        let currentView = 'catalog'; 
+        let currentBookId = null;
+        let currentChapterIndex = 0;
+        let currentFontSize = 18; 
+        let currentReaderTheme = 'light'; 
+        let activeCategory = 'все';
+        let searchQuery = '';
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderCatalog();
+            checkUrlParams();
+            // Check dark mode
+            if (document.documentElement.classList.contains('dark')) {
+                document.getElementById('theme-icon').className = 'fa-solid fa-sun text-lg';
+            }
+        });
+
+        function checkUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookParam = urlParams.get('book');
+            const chapterParam = urlParams.get('chapter');
+
+            if (bookParam) {
+                const book = booksDatabase.find(b => b.id === bookParam);
+                if (book) {
+                    const chapterIdx = chapterParam ? parseInt(chapterParam) : 0;
+                    openReader(bookParam, chapterIdx);
+                }
+            }
+        }
+
+        function renderCatalog() {
+            const grid = document.getElementById('books-grid');
+            const noBooks = document.getElementById('no-books');
+
+            let filtered = booksDatabase.filter(book => {
+                const matchesCat = activeCategory === 'все' || book.category === activeCategory;
+                const matchesSearch = book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    book.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    book.description.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCat && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                noBooks.classList.remove('hidden');
+                return;
+            }
+
+            noBooks.classList.add('hidden');
+            grid.innerHTML = filtered.map(book => `
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col justify-between hover:shadow-md transition-all group">
+                    <div class="space-y-4">
+                        <div class="flex items-start justify-between">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br ${book.coverBg} text-white flex items-center justify-center text-xl shadow-md group-hover:scale-105 transition-transform">
+                                <i class="fa-solid ${book.coverIcon}"></i>
+                            </div>
+                            <span class="px-3 py-1 bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 rounded-full text-xs font-semibold">${book.category}</span>
+                        </div>
+                        <div>
+                            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">${book.year} г.</span>
+                            <h3 class="font-serif font-bold text-xl text-slate-900 dark:text-slate-100 mt-0.5 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">${book.title}</h3>
+                            <p class="text-sm font-medium text-amber-700 dark:text-amber-400 mt-1">${book.author}</p>
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 line-clamp-3">${book.description}</p>
+                    </div>
+                    <div class="pt-6 mt-6 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                        <button onclick="copyBookLink('${book.id}')" class="text-xs text-slate-500 hover:text-amber-700 flex items-center space-x-1.5 transition-colors" title="Скопировать ссылку на книгу">
+                            <i class="fa-solid fa-link"></i>
+                            <span>Ссылка</span>
+                        </button>
+                        <button onclick="openReader('${book.id}', 0)" class="px-4 py-2 bg-amber-700 hover:bg-amber-800 text-white rounded-xl text-sm font-medium flex items-center space-x-2 transition-colors shadow-sm">
+                            <span>Читать</span>
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterCategory(category) {
+            activeCategory = category;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if (btn.getAttribute('data-cat') === category) {
+                    btn.className = 'cat-btn px-4 py-2 rounded-xl text-sm font-medium bg-amber-700 text-white shadow-sm transition-all';
+                } else {
+                    btn.className = 'cat-btn px-4 py-2 rounded-xl text-sm font-medium bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all';
+                }
+            });
+            renderCatalog();
+        }
+
+        function handleSearch(query) {
+            searchQuery = query;
+            renderCatalog();
+        }
+
+        function switchView(view) {
+            currentView = view;
+            const catalogView = document.getElementById('catalog-view');
+            const readerView = document.getElementById('reader-view');
+            const navCatalogBtn = document.getElementById('nav-catalog-btn');
+            const headerSearchContainer = document.getElementById('header-search-container');
+
+            if (view === 'catalog') {
+                catalogView.classList.remove('hidden');
+                readerView.classList.add('hidden');
+                navCatalogBtn.classList.remove('flex');
+                navCatalogBtn.classList.add('hidden');
+                headerSearchContainer.classList.remove('hidden');
+                headerSearchContainer.classList.add('flex');
+                window.history.pushState({}, '', window.location.pathname);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                catalogView.classList.add('hidden');
+                readerView.classList.remove('hidden');
+                navCatalogBtn.classList.remove('hidden');
+                navCatalogBtn.classList.add('flex');
+                headerSearchContainer.classList.add('hidden');
+                headerSearchContainer.classList.remove('flex');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function openReader(bookId, chapterIdx) {
+            currentBookId = bookId;
+            currentChapterIndex = chapterIdx;
+            const book = booksDatabase.find(b => b.id === bookId);
+            if (!book) return;
+
+            const newUrl = `${window.location.pathname}?book=${bookId}&chapter=${chapterIdx}`;
+            window.history.pushState({ bookId, chapterIdx }, '', newUrl);
+
+            document.getElementById('reader-book-title').innerText = book.title;
+            document.getElementById('reader-book-author').innerText = book.author;
+            document.getElementById('reader-chapter-title').innerText = book.chapters[chapterIdx].title;
+            document.getElementById('reader-chapter-heading').innerText = book.chapters[chapterIdx].title;
+
+            const textBody = document.getElementById('reader-text-body');
+            textBody.innerHTML = book.chapters[chapterIdx].text.map(paragraph => `<p>${paragraph.replace(/\n/g, '<br>')}</p>`).join('');
+
+            const chaptersList = document.getElementById('chapters-list');
+            chaptersList.innerHTML = book.chapters.map((ch, idx) => `
+                <button onclick="openReader('${bookId}', ${idx})" class="w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${idx === chapterIdx ? 'bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300 font-semibold' : 'hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400'}">
+                    ${idx + 1}. ${ch.title}
+                </button>
+            `).join('');
+
+            document.getElementById('prev-chapter-btn').disabled = chapterIdx === 0;
+            document.getElementById('prev-chapter-btn').style.opacity = chapterIdx === 0 ? '0.5' : '1';
+            document.getElementById('next-chapter-btn').disabled = chapterIdx === book.chapters.length - 1;
+            document.getElementById('next-chapter-btn').style.opacity = chapterIdx === book.chapters.length - 1 ? '0.5' : '1';
+
+            updateProgressBar();
+            switchView('reader');
+        }
+
+        function changeChapter(direction) {
+            const book = booksDatabase.find(b => b.id === currentBookId);
+            if (!book) return;
+            const newIdx = currentChapterIndex + direction;
+            if (newIdx >= 0 && newIdx < book.chapters.length) {
+                openReader(currentBookId, newIdx);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function changeFontSize(delta) {
+            currentFontSize = Math.max(14, Math.min(26, currentFontSize + delta));
+            document.getElementById('font-size-display').innerText = currentFontSize + 'px';
+            document.getElementById('reader-text-body').style.fontSize = currentFontSize + 'px';
+        }
+
+        function setReaderTheme(theme) {
+            currentReaderTheme = theme;
+            const wrapper = document.getElementById('reader-content-wrapper');
+            if (theme === 'light') {
+                wrapper.className = 'lg:col-span-3 bg-white text-slate-800 p-6 md:p-12 rounded-2xl shadow-sm border border-slate-200 transition-colors';
+            } else if (theme === 'sepia') {
+                wrapper.className = 'lg:col-span-3 bg-[#fbf0d9] text-[#5f4b32] p-6 md:p-12 rounded-2xl shadow-sm border border-[#e8d7bc] transition-colors';
+            } else if (theme === 'dark') {
+                wrapper.className = 'lg:col-span-3 bg-slate-900 text-slate-100 p-6 md:p-12 rounded-2xl shadow-sm border border-slate-700 transition-colors';
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('reader-sidebar');
+            sidebar.classList.toggle('hidden');
+        }
+
+        function updateProgressBar() {
+            const book = booksDatabase.find(b => b.id === currentBookId);
+            if (!book) return;
+            const progress = ((currentChapterIndex + 1) / book.chapters.length) * 100;
+            document.getElementById('reading-progress').style.width = progress + '%';
+        }
+
+        function copyBookLink(bookId) {
+            const link = `${window.location.origin}${window.location.pathname}?book=${bookId}&chapter=0`;
+            const textArea = document.createElement("textarea");
+            textArea.value = link;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showModal('Ссылка скопирована', 'Прямая ссылка на книгу успешно скопирована в буфер обмена.');
+            } catch (err) {
+                showModal('Ошибка', 'Не удалось скопировать ссылку.');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function saveBookmark() {
+            const book = booksDatabase.find(b => b.id === currentBookId);
+            if (!book) return;
+            const bookmarkData = {
+                bookId: currentBookId,
+                bookTitle: book.title,
+                chapterIndex: currentChapterIndex,
+                chapterTitle: book.chapters[currentChapterIndex].title,
+                timestamp: new Date().toLocaleDateString()
+            };
+            localStorage.setItem('russian_classics_bookmark', JSON.stringify(bookmarkData));
+            showModal('Закладка сохранена', `Прогресс в книге «${book.title}» (Глава: ${book.chapters[currentChapterIndex].title}) успешно сохранен.`);
+        }
+
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            const icon = document.getElementById('theme-icon');
+            if (isDark) {
+                icon.className = 'fa-solid fa-sun text-lg';
+            } else {
+                icon.className = 'fa-solid fa-moon text-lg';
+            }
+        }
+
+        function showModal(title, text) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-text').innerText = text;
+            const modal = document.getElementById('message-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('message-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        function showInfoModal(title, text) {
+            showModal(title, text);
+        }
+    </script>
+</body>
+
+</html>
